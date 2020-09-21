@@ -49,3 +49,8 @@ At this pooint we have lots of options for how to create a device and generate t
 * Whilst we are in VS Code we will generate the SAS token we will need shortly. Right click on your device and select `Generate SAS Token for Device` and enter an expiry time in hours. Copy the whole output line to clipboard, including the SharedAccessSignature prefix.
 
     > Where the device itself generates SAS tokens we would choose a short expiry but in this case we have to refresh by hand so we put a longer expiry time in. One year is just over 61,000 hours.
+
+## Setting up the Things Networks application integration
+
+* In your TTN Console go to [applications](https://console.thethingsnetwork.org/applications) and select `add application`
+* Give it a name and make sure the handler is set to the same region as your gateway.
