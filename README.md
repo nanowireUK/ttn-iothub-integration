@@ -1,13 +1,16 @@
-# The Things Network integration with Azure Iot Hub over HTTP
+# The Things Network integration with Azure IoT Hub over HTTP
 
 A walkthrough and sample for connecting a 'The Things Network' gateway to Azure IoT Hub.
 
 The steps we will carry out are:
+
 1. Get the TTN Indoor Gateway connected to your wireless network
 2. Associate the gateway to the Things Network
 3. Set up the IoT Hub in Azure
 4. Create an IoT Device and get credentials
 5. Set up a TTN application integration to push messages over HTTP
+6. Use the VS Code IoT Hub extension to view data
+7. Send a message back to the device
 
 ## Set up the TTN Gateway
 
@@ -52,5 +55,35 @@ At this pooint we have lots of options for how to create a device and generate t
 
 ## Setting up the Things Networks application integration
 
-* In your TTN Console go to [applications](https://console.thethingsnetwork.org/applications) and select `add application`
-* Give it a name and make sure the handler is set to the same region as your gateway.
+* The first thing to do is fully complete the [Things Uno Quickstart Guide](https://www.thethingsnetwork.org/docs/devices/uno/quick-start.html). In this guide you will do the following:
+  * Create an [Application](https://console.thethingsnetwork.org/applications) in the TTN Console.
+  * Set up an Arduino development environment and connect your device to your PC.
+  * Get the device registered and connected to the application.
+  * Send and receive data with the device.
+  * Create Payload Formatters.
+* Our next step is to create the Azure IoT Hub integration. Within your [Application Console](https://console.thethingsnetwork.org/applications), select `Integrations` and click on `add integration`.
+* There are many options available for integration and we are going to choose `HTTP Integration` as the simplest.
+* Fill out the following:
+  * **Process ID**: Anything you want
+  * **Access Key**: Select the only entry in the list
+  * **URL**: This needs to be formed based on your IoT Hub URL and Device ID for the device you created early. The format is `https://{fully-qualified-iothubname}.azure-devices.net/devices/{id}/messages/events?api-version=2020-03-13`
+
+        > The source of this URL is comprehensive description of the [IoT Hub Send Device Event API](https://docs.microsoft.com/en-us/rest/api/iothub/device/senddeviceevent) 
+
+  * **Method**: `POST`
+  * **Authorization**: This is the full SAS token you generated earlier   
+
+        > The documentation for authenticating against the API is in the [IoT Hub API Overview](https://docs.microsoft.com/en-us/rest/api/iothub/)
+
+  * **Custom Header Name**: Anything you like provided it starts with `iothub-app-`
+
+        > This is also described in the [IoT Hub Send Device Event API](https://docs.microsoft.com/en-us/rest/api/iothub/device/senddeviceevent)
+
+  * **Custom Header Value**: Any string
+
+        > As per [documentation](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-construct), property names and values can only contain ASCII alphanumeric characters, plus {'!', '#', '$', '%, '&', ''', '*', '+', '-', '.', '^', '_', '`', '|', '~'} when you send device-to-cloud messages using the HTTPS protocol or send cloud-to-device messages.
+
+    ![picture](images/iothub-integration-small.jpg)
+
+* Finish by clicking on `Add Integration`
+  > At this stage the integration *should* be working but we won't get any errors in the TTN console even if it went wrong. The next step is to confirm data is being received.
