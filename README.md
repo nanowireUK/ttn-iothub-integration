@@ -103,7 +103,7 @@ The Azure IoT Tools extension that we installed earlier can also be used for mon
 
 * In the output window you will see as messages come through from the TTN endpoint
 
-    ![Message output](images\vscode-monitoring.jpg)
+    ![Message output](images/vscode-monitoring.jpg)
 
 * The Things Network [HTTP Integration Documentation](https://www.thethingsnetwork.org/docs/applications/http/) provides a comprehensive overview of the payload and particularly how the downlink can be used.
 
