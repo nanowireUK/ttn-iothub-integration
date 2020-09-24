@@ -116,8 +116,8 @@ The Azure IoT Tools extension that we installed earlier can also be used for mon
     "hardware_serial": "000000000000000",
     "port": 1,
     "counter": 92,
-    "payload_raw": "AA==", // This is the raw base 64 payload
-    "payload_fields": { // payload_fields are the output of the decoder, converter, validator pipeline
+    "payload_raw": "AA==",
+    "payload_fields": {
         "led": false
     },
     "metadata": {
@@ -126,7 +126,7 @@ The Azure IoT Tools extension that we installed earlier can also be used for mon
         "modulation": "LORA",
         "data_rate": "SF7BW125",
         "coding_rate": "4/5",
-        "gateways": [ // useful metadata about the connection. 
+        "gateways": [
             {
                 "gtw_id": "eui-XXXXXXXXXXXXX",
                 "timestamp": 225820444,
@@ -138,7 +138,6 @@ The Azure IoT Tools extension that we installed earlier can also be used for mon
             }
         ]
     },
-    // The downlink_url is the most interesting field beyond the payload.
     "downlink_url": "https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/APPID/INTEGRATIONID?key=TOKEN"
 }
 ```
