@@ -1,6 +1,9 @@
 # The Things Network integration with Azure IoT Hub over HTTP
 
-A walkthrough and sample for connecting a 'The Things Network' gateway to Azure IoT Hub.
+A walkthrough and sample for connecting a 'The Things Network' gateway and LoRa device to Azure IoT Hub.The get started you will need:
+
+* A Things Network Gateway such as the TTIG
+* A LoRa device that can connect to the gateway and send messages
 
 The steps we will carry out are:
 
@@ -15,7 +18,7 @@ The steps we will carry out are:
 ## Set up the TTN Gateway
 
 * Sign up for free to [The Things Network](https://account.thethingsnetwork.org/register)
-* Follow the [Quickstart] to get the gateway connected to your home Wifi and associated to your TTN account.
+* Follow the [Quickstart](https://www.thethingsnetwork.org/docs/gateways/thethingsindoor/) to get the gateway connected to your home Wifi and associated to your TTN account.
 * Fill in the various information about your gateway in the console
 
 ## Set up Azure Environment
@@ -30,7 +33,7 @@ The steps we will carry out are:
 
 ## Create a device and get credentials
 
-At this pooint we have lots of options for how to create a device and generate the required credentials but I'll go through my favourite since this will also later let us view incoming data.
+At this pooint we have lots of options for how to create a device and generate the required credentials but I'll go through my preferred method since this will also later let us view incoming data.
 
 * Download and install [Visual Studio Code](https://code.visualstudio.com/Download)
 * Open VS Code and install the `Azure IoT Tools` extension
@@ -55,6 +58,8 @@ At this pooint we have lots of options for how to create a device and generate t
 
 ## Setting up the Things Networks application integration
 
+This is the interesting bit where 
+
 * The first thing to do is fully complete the [Things Uno Quickstart Guide](https://www.thethingsnetwork.org/docs/devices/uno/quick-start.html). In this guide you will do the following:
   * Create an [Application](https://console.thethingsnetwork.org/applications) in the TTN Console.
   * Set up an Arduino development environment and connect your device to your PC.
@@ -62,7 +67,7 @@ At this pooint we have lots of options for how to create a device and generate t
   * Send and receive data with the device.
   * Create Payload Formatters.
 * Our next step is to create the Azure IoT Hub integration. Within your [Application Console](https://console.thethingsnetwork.org/applications), select `Integrations` and click on `add integration`.
-* There are many options available for integration and we are going to choose `HTTP Integration` as the simplest.
+* There are many options available for integration and we are going to choose `HTTP Integration` as the simplest. The [HTTP Integration Documentation](https://www.thethingsnetwork.org/docs/applications/http/) provides more information on the attributes needed.
 * Fill out the following:
   * **Process ID**: Anything you want
   * **Access Key**: Select the only entry in the list
@@ -87,3 +92,53 @@ At this pooint we have lots of options for how to create a device and generate t
 
 * Finish by clicking on `Add Integration`
   > At this stage the integration *should* be working but we won't get any errors in the TTN console even if it went wrong. The next step is to confirm data is being received.
+
+## Using VS Code to see incoming messages
+
+The Azure IoT Tools extension that we installed earlier can also be used for monitoring messages that are received by the IoT Hub.
+
+* Open VS Code and open the Azure IoT Hub panel
+* Either right-click on the specific device you want to monitor or click on the elipsis for IoT Hub and select `Start Monitoring Built-In DeviEventce Endpoint`
+    > This will only show output if you have not changed the Message Routing in the IoT Hub
+
+* In the output window you will see as messages come through from the TTN endpoint
+
+    ![Message output](images\vscode-monitoring.jpg)
+
+* The Things Network [HTTP Integration Documentation](https://www.thethingsnetwork.org/docs/applications/http/) provides a comprehensive overview of the payload and particularly how the downlink can be used.
+
+### Example message
+
+```json
+{
+    "app_id": "APPID",
+    "dev_id": "DEVID",
+    "hardware_serial": "000000000000000",
+    "port": 1,
+    "counter": 92,
+    "payload_raw": "AA==", // This is the raw base 64 payload
+    "payload_fields": { // payload_fields are the output of the decoder, converter, validator pipeline
+        "led": false
+    },
+    "metadata": {
+        "time": "2020-09-24T08:05:42.800365668Z",
+        "frequency": 867.5,
+        "modulation": "LORA",
+        "data_rate": "SF7BW125",
+        "coding_rate": "4/5",
+        "gateways": [ // useful metadata about the connection. 
+            {
+                "gtw_id": "eui-XXXXXXXXXXXXX",
+                "timestamp": 225820444,
+                "time": "2020-09-24T08:05:42.87820506Z",
+                "channel": 0,
+                "rssi": -57,
+                "snr": 6.75,
+                "rf_chain": 0
+            }
+        ]
+    },
+    // The downlink_url is the most interesting field beyond the payload.
+    "downlink_url": "https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/APPID/INTEGRATIONID?key=TOKEN"
+}
+```
